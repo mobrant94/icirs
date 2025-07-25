@@ -157,11 +157,34 @@ modelo <- glm(
 )
 
 # Estimar médias marginais ajustadas por faixa_etaria dentro de cada região
-emm <- emmeans(modelo, ~ faixa_etaria | regiao, type = "response")
+emm <- emmeans(modelo, ~ faixa_etaria, type = "response")
 emm_df <- as.data.frame(emm)
 
 # Plotar médias marginais ajustadas por faixa_etaria e região
-ggplot(emm_df, aes(x = regiao, y = response, color = faixa_etaria, group = faixa_etaria)) +
+ggplot(emm_df, aes(x = faixa_etaria, y = response, color = faixa_etaria, group = faixa_etaria)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3) +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
+                width = 0.2,
+                position = position_dodge(width = 0.5)) +
+  labs(
+    title = "Tempo médio ajustado entre diagnóstico e tratamento",
+    subtitle = "Por e faixa etária (ajustado por região e habilitação)",
+    x = "Faixa etária",
+    y = "Tempo médio ajustado (dias)",
+    color = "Faixa etária"
+  ) +
+  theme_classic() +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold"),
+  )
+
+# Estimar médias marginais ajustadas por faixa_etaria dentro de cada região
+emm1 <- emmeans(modelo, ~ faixa_etaria|regiao, type = "response")
+emm_df1 <- as.data.frame(emm1)
+
+# Plotar médias marginais ajustadas por faixa_etaria e região
+ggplot(emm_df1, aes(x = regiao, y = response, color = faixa_etaria, group = faixa_etaria)) +
   geom_point(position = position_dodge(width = 0.5), size = 3) +
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL),
                 width = 0.2,
